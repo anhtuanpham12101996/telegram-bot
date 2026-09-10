@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="TelegramRelay.csproj" />
+  <Project Path="TelegramRelay.Tests/TelegramRelay.Tests.csproj" />
+</Solution>
