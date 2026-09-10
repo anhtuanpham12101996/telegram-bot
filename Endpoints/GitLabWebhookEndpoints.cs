@@ -17,7 +17,7 @@ public static class GitLabWebhookEndpoints
         HttpContext httpContext,
         IGitLabWebhookValidator validator,
         ITelegramChatResolver chatResolver,
-        IGitLabNotificationService notificationService,
+        IGitLabNotificationQueue notificationQueue,
         IOptions<RelayOptions> options,
         ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
@@ -103,19 +103,13 @@ public static class GitLabWebhookEndpoints
             });
         }
 
-        bool sent = await notificationService.SendNotificationAsync(targetChatId.Value, payload, kind, cancellationToken);
-        if (!sent)
-        {
-            logger.LogError("Failed to dispatch GitLab Telegram message to Chat ID {ChatId}.", targetChatId.Value);
-            return Results.Problem(
-                statusCode: StatusCodes.Status502BadGateway,
-                title: "Telegram Dispatch Failed",
-                detail: "Could not deliver the GitLab notification message to Telegram.");
-        }
+        await notificationQueue.QueueAsync(
+            new GitLabNotificationJob(targetChatId.Value, payload, kind),
+            cancellationToken);
 
         return Results.Ok(new
         {
-            status = "success",
+            status = "accepted",
             chatId = targetChatId.Value,
             kind = kind.ToString(),
             objectKind = payload.ObjectKind,

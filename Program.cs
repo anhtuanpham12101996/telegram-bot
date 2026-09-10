@@ -61,6 +61,8 @@ builder.Services.AddSingleton<ITaigaWebhookValidator, TaigaWebhookValidator>();
 builder.Services.AddSingleton<IGitLabWebhookValidator, GitLabWebhookValidator>();
 builder.Services.AddScoped<ITelegramNotificationService, TelegramNotificationService>();
 builder.Services.AddScoped<IGitLabNotificationService, GitLabNotificationService>();
+builder.Services.AddSingleton<IGitLabNotificationQueue, GitLabNotificationQueue>();
+builder.Services.AddHostedService<GitLabNotificationWorker>();
 
 var app = builder.Build();
 

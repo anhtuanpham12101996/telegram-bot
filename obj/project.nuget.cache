@@ -1,20 +1,20 @@
 {
   "version": 2,
-  "dgSpecHash": "Hdk4EP/A9rU=",
+  "dgSpecHash": "/JoFeuVg4RM=",
   "success": true,
   "projectFilePath": "/Users/tuanpham/Desktop/freelance/telegram-bot/TelegramRelay.csproj",
   "expectedPackageFiles": [
-    "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget/microsoft.extensions.configuration.abstractions/8.0.0/microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",
-    "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget/microsoft.extensions.configuration.binder/8.0.0/microsoft.extensions.configuration.binder.8.0.0.nupkg.sha512",
-    "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
-    "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget/microsoft.extensions.options/8.0.0/microsoft.extensions.options.8.0.0.nupkg.sha512",
-    "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget/microsoft.extensions.options.configurationextensions/8.0.0/microsoft.extensions.options.configurationextensions.8.0.0.nupkg.sha512",
-    "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget/microsoft.extensions.primitives/8.0.0/microsoft.extensions.primitives.8.0.0.nupkg.sha512",
-    "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget/system.text.json/8.0.5/system.text.json.8.0.5.nupkg.sha512",
-    "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget/telegram.bot/22.0.0/telegram.bot.22.0.0.nupkg.sha512",
-    "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget/microsoft.netcore.app.ref/8.0.28/microsoft.netcore.app.ref.8.0.28.nupkg.sha512",
-    "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget/microsoft.aspnetcore.app.ref/8.0.28/microsoft.aspnetcore.app.ref.8.0.28.nupkg.sha512",
-    "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget/microsoft.netcore.app.host.osx-arm64/8.0.28/microsoft.netcore.app.host.osx-arm64.8.0.28.nupkg.sha512"
+    "/Users/tuanpham/.nuget/packages/microsoft.extensions.configuration.abstractions/8.0.0/microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",
+    "/Users/tuanpham/.nuget/packages/microsoft.extensions.configuration.binder/8.0.0/microsoft.extensions.configuration.binder.8.0.0.nupkg.sha512",
+    "/Users/tuanpham/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "/Users/tuanpham/.nuget/packages/microsoft.extensions.options/8.0.0/microsoft.extensions.options.8.0.0.nupkg.sha512",
+    "/Users/tuanpham/.nuget/packages/microsoft.extensions.options.configurationextensions/8.0.0/microsoft.extensions.options.configurationextensions.8.0.0.nupkg.sha512",
+    "/Users/tuanpham/.nuget/packages/microsoft.extensions.primitives/8.0.0/microsoft.extensions.primitives.8.0.0.nupkg.sha512",
+    "/Users/tuanpham/.nuget/packages/system.text.json/8.0.5/system.text.json.8.0.5.nupkg.sha512",
+    "/Users/tuanpham/.nuget/packages/telegram.bot/22.0.0/telegram.bot.22.0.0.nupkg.sha512",
+    "/Users/tuanpham/.nuget/packages/microsoft.netcore.app.ref/8.0.28/microsoft.netcore.app.ref.8.0.28.nupkg.sha512",
+    "/Users/tuanpham/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.28/microsoft.aspnetcore.app.ref.8.0.28.nupkg.sha512",
+    "/Users/tuanpham/.nuget/packages/microsoft.netcore.app.host.osx-arm64/8.0.28/microsoft.netcore.app.host.osx-arm64.8.0.28.nupkg.sha512"
   ],
   "logs": []
 }

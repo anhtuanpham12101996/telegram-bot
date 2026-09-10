@@ -2,6 +2,7 @@ namespace TelegramRelay.Tests;
 
 using System.Net;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -15,18 +16,17 @@ public class GitLabWebhookEndpointTests : IClassFixture<WebApplicationFactory<Pr
 {
     private const string WebhookSecret = "gitlab-test-webhook-secret";
     private readonly WebApplicationFactory<Program> _factory;
-    private readonly Mock<IGitLabNotificationService> _mockNotificationService;
+    private readonly Mock<IGitLabNotificationQueue> _mockNotificationQueue;
 
     public GitLabWebhookEndpointTests(WebApplicationFactory<Program> factory)
     {
-        _mockNotificationService = new Mock<IGitLabNotificationService>();
-        _mockNotificationService
-            .Setup(s => s.SendNotificationAsync(
-                It.IsAny<long>(),
-                It.IsAny<GitLabWebhookPayload>(),
-                It.IsAny<GitLabNotifyKind>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
+        _mockNotificationQueue = new Mock<IGitLabNotificationQueue>();
+        _mockNotificationQueue
+            .Setup(q => q.QueueAsync(It.IsAny<GitLabNotificationJob>(), It.IsAny<CancellationToken>()))
+            .Returns(ValueTask.CompletedTask);
+        _mockNotificationQueue
+            .Setup(q => q.DequeueAllAsync(It.IsAny<CancellationToken>()))
+            .Returns<CancellationToken>(_ => EmptyJobs());
 
         _factory = factory.WithWebHostBuilder(builder =>
         {
@@ -36,7 +36,7 @@ public class GitLabWebhookEndpointTests : IClassFixture<WebApplicationFactory<Pr
             builder.UseSetting("TelegramRelay:GitLabProjectChatMappings:10", "-100123456789");
             builder.ConfigureTestServices(services =>
             {
-                services.AddScoped(_ => _mockNotificationService.Object);
+                services.AddSingleton(_ => _mockNotificationQueue.Object);
             });
         });
     }
@@ -62,9 +62,9 @@ public class GitLabWebhookEndpointTests : IClassFixture<WebApplicationFactory<Pr
     }
 
     [Fact]
-    public async Task PostWebhook_WhenMergeRequestOpened_Returns200Ok()
+    public async Task PostWebhook_WhenMergeRequestOpened_Returns200AcceptedWithoutWaitingForTelegram()
     {
-        _mockNotificationService.Invocations.Clear();
+        _mockNotificationQueue.Invocations.Clear();
         var client = _factory.CreateClient();
         string json = """
         {
@@ -83,20 +83,19 @@ public class GitLabWebhookEndpointTests : IClassFixture<WebApplicationFactory<Pr
         """;
 
         var response = await SendWebhookAsync(client, json);
+        string body = await response.Content.ReadAsStringAsync();
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Contains("success", await response.Content.ReadAsStringAsync());
-        _mockNotificationService.Verify(s => s.SendNotificationAsync(
-            -100123456789,
-            It.IsAny<GitLabWebhookPayload>(),
-            GitLabNotifyKind.MergeRequestOpened,
+        Assert.Contains("accepted", body);
+        _mockNotificationQueue.Verify(q => q.QueueAsync(
+            It.Is<GitLabNotificationJob>(j => j.ChatId == -100123456789 && j.Kind == GitLabNotifyKind.MergeRequestOpened),
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     public async Task PostWebhook_WhenMergeRequestCommented_Returns200Ok()
     {
-        _mockNotificationService.Invocations.Clear();
+        _mockNotificationQueue.Invocations.Clear();
         var client = _factory.CreateClient();
         string json = """
         {
@@ -116,10 +115,8 @@ public class GitLabWebhookEndpointTests : IClassFixture<WebApplicationFactory<Pr
         var response = await SendWebhookAsync(client, json);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        _mockNotificationService.Verify(s => s.SendNotificationAsync(
-            It.IsAny<long>(),
-            It.IsAny<GitLabWebhookPayload>(),
-            GitLabNotifyKind.MergeRequestCommented,
+        _mockNotificationQueue.Verify(q => q.QueueAsync(
+            It.Is<GitLabNotificationJob>(j => j.Kind == GitLabNotifyKind.MergeRequestCommented),
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -128,7 +125,7 @@ public class GitLabWebhookEndpointTests : IClassFixture<WebApplicationFactory<Pr
     [InlineData("merge", "MergeRequestMerged")]
     public async Task PostWebhook_WhenApprovedOrMerged_Returns200Ok(string action, string expectedKind)
     {
-        _mockNotificationService.Invocations.Clear();
+        _mockNotificationQueue.Invocations.Clear();
         var client = _factory.CreateClient();
         string json = $$"""
         {
@@ -147,17 +144,15 @@ public class GitLabWebhookEndpointTests : IClassFixture<WebApplicationFactory<Pr
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         GitLabNotifyKind kind = Enum.Parse<GitLabNotifyKind>(expectedKind);
-        _mockNotificationService.Verify(s => s.SendNotificationAsync(
-            It.IsAny<long>(),
-            It.IsAny<GitLabWebhookPayload>(),
-            kind,
+        _mockNotificationQueue.Verify(q => q.QueueAsync(
+            It.Is<GitLabNotificationJob>(j => j.Kind == kind),
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     public async Task PostWebhook_WhenMergeRequestUpdated_ReturnsIgnored()
     {
-        _mockNotificationService.Invocations.Clear();
+        _mockNotificationQueue.Invocations.Clear();
         var client = _factory.CreateClient();
         string json = """
         {
@@ -171,17 +166,15 @@ public class GitLabWebhookEndpointTests : IClassFixture<WebApplicationFactory<Pr
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Contains("ignored", await response.Content.ReadAsStringAsync());
-        _mockNotificationService.Verify(s => s.SendNotificationAsync(
-            It.IsAny<long>(),
-            It.IsAny<GitLabWebhookPayload>(),
-            It.IsAny<GitLabNotifyKind>(),
+        _mockNotificationQueue.Verify(q => q.QueueAsync(
+            It.IsAny<GitLabNotificationJob>(),
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
     public async Task PostWebhook_WhenPipelineSucceeded_Returns200Ok()
     {
-        _mockNotificationService.Invocations.Clear();
+        _mockNotificationQueue.Invocations.Clear();
         var client = _factory.CreateClient();
         string json = """
         {
@@ -200,10 +193,8 @@ public class GitLabWebhookEndpointTests : IClassFixture<WebApplicationFactory<Pr
         var response = await SendWebhookAsync(client, json);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        _mockNotificationService.Verify(s => s.SendNotificationAsync(
-            It.IsAny<long>(),
-            It.IsAny<GitLabWebhookPayload>(),
-            GitLabNotifyKind.PipelineSucceeded,
+        _mockNotificationQueue.Verify(q => q.QueueAsync(
+            It.Is<GitLabNotificationJob>(j => j.Kind == GitLabNotifyKind.PipelineSucceeded),
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -233,5 +224,12 @@ public class GitLabWebhookEndpointTests : IClassFixture<WebApplicationFactory<Pr
         }
 
         return await client.SendAsync(request);
+    }
+
+    private static async IAsyncEnumerable<GitLabNotificationJob> EmptyJobs(
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await Task.CompletedTask;
+        yield break;
     }
 }

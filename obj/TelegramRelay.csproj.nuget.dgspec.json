@@ -10,7 +10,7 @@
         "projectUniqueName": "/Users/tuanpham/Desktop/freelance/telegram-bot/TelegramRelay.csproj",
         "projectName": "TelegramRelay",
         "projectPath": "/Users/tuanpham/Desktop/freelance/telegram-bot/TelegramRelay.csproj",
-        "packagesPath": "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget",
+        "packagesPath": "/Users/tuanpham/.nuget/packages/",
         "outputPath": "/Users/tuanpham/Desktop/freelance/telegram-bot/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [

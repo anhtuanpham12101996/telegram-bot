@@ -2594,7 +2594,7 @@
     ]
   },
   "packageFolders": {
-    "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget": {}
+    "/Users/tuanpham/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
@@ -2602,7 +2602,7 @@
       "projectUniqueName": "/Users/tuanpham/Desktop/freelance/telegram-bot/TelegramRelay.Tests/TelegramRelay.Tests.csproj",
       "projectName": "TelegramRelay.Tests",
       "projectPath": "/Users/tuanpham/Desktop/freelance/telegram-bot/TelegramRelay.Tests/TelegramRelay.Tests.csproj",
-      "packagesPath": "/var/folders/4z/_pz43py90bbb1f7sz5sq9bnc0000gn/T/cursor-sandbox-cache/c55d7811bd39e86d33adbce0566ecfe5/nuget",
+      "packagesPath": "/Users/tuanpham/.nuget/packages/",
       "outputPath": "/Users/tuanpham/Desktop/freelance/telegram-bot/TelegramRelay.Tests/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
