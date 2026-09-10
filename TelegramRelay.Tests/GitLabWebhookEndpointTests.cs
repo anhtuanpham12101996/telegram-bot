@@ -13,7 +13,7 @@ using Xunit;
 
 public class GitLabWebhookEndpointTests : IClassFixture<WebApplicationFactory<Program>>
 {
-    private const string WebhookSecret = "YOUR_GITLAB_WEBHOOK_SECRET";
+    private const string WebhookSecret = "gitlab-test-webhook-secret";
     private readonly WebApplicationFactory<Program> _factory;
     private readonly Mock<IGitLabNotificationService> _mockNotificationService;
 

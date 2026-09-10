@@ -30,3 +30,4 @@
 /Users/tuanpham/Desktop/freelance/telegram-bot/obj/Debug/net8.0/TelegramRelay.pdb
 /Users/tuanpham/Desktop/freelance/telegram-bot/obj/Debug/net8.0/TelegramRelay.genruntimeconfig.cache
 /Users/tuanpham/Desktop/freelance/telegram-bot/obj/Debug/net8.0/ref/TelegramRelay.dll
+/Users/tuanpham/Desktop/freelance/telegram-bot/obj/Debug/net8.0/TelegramRelay.sourcelink.json

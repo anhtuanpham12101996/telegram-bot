@@ -14,7 +14,7 @@ using Xunit;
 
 public class TaigaWebhookEndpointTests : IClassFixture<WebApplicationFactory<Program>>
 {
-    private const string WebhookSecret = "YOUR_TAIGA_WEBHOOK_SECRET";
+    private const string WebhookSecret = "taiga-test-webhook-secret";
     private readonly WebApplicationFactory<Program> _factory;
     private readonly Mock<ITelegramNotificationService> _mockNotificationService;
 

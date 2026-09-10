@@ -34,10 +34,16 @@ public static class GitLabWebhookEndpoints
             httpContext.Request.Body.Position = 0;
         }
 
-        if (!validator.Validate(httpContext.Request))
+        if (!validator.Validate(httpContext.Request, rawBody))
         {
             logger.LogWarning("GitLab webhook validation failed for request from {RemoteIp}.", httpContext.Connection.RemoteIpAddress);
-            return Results.Unauthorized();
+            return Results.Json(
+                new
+                {
+                    error = "unauthorized",
+                    hint = "GitLab.com signs webhooks with webhook-signature (whsec_ signing token). Put that token in TelegramRelay__GitLabSecret, or use a legacy Secret token matching X-Gitlab-Token."
+                },
+                statusCode: StatusCodes.Status401Unauthorized);
         }
 
         GitLabWebhookPayload? payload;

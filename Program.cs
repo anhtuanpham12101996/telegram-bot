@@ -18,6 +18,30 @@ if (!string.IsNullOrWhiteSpace(port))
 // 1. Configuration & Options
 builder.Services.Configure<RelayOptions>(
     builder.Configuration.GetSection(RelayOptions.SectionName));
+builder.Services.PostConfigure<RelayOptions>(options =>
+{
+    // Accept the old section name so existing Render env vars still bind after the rename.
+    var legacy = builder.Configuration.GetSection("TaigaTelegramRelay");
+    if (!RelaySecrets.IsConfigured(options.TelegramBotToken))
+    {
+        options.TelegramBotToken = RelaySecrets.Normalize(legacy["TelegramBotToken"]);
+    }
+
+    if (!RelaySecrets.IsConfigured(options.TaigaSecret))
+    {
+        options.TaigaSecret = RelaySecrets.Normalize(legacy["TaigaSecret"]);
+    }
+
+    if (!RelaySecrets.IsConfigured(options.GitLabSecret))
+    {
+        options.GitLabSecret = RelaySecrets.Normalize(legacy["GitLabSecret"]);
+    }
+
+    if (!options.DefaultChatId.HasValue && long.TryParse(legacy["DefaultChatId"], out long legacyChatId))
+    {
+        options.DefaultChatId = legacyChatId;
+    }
+});
 
 // 2. HTTP Client & Telegram Bot Registration via Typed Client Pattern
 builder.Services.AddHttpClient("TelegramBotClient")
@@ -70,7 +94,13 @@ app.MapPost("/api/webhooks/taiga", async (
     if (!validator.Validate(httpContext.Request, rawBody))
     {
         logger.LogWarning("Webhook validation failed for request from {RemoteIp}.", httpContext.Connection.RemoteIpAddress);
-        return Results.Unauthorized();
+        return Results.Json(
+            new
+            {
+                error = "unauthorized",
+                hint = "Taiga webhook secret/signature must match Render env TelegramRelay__TaigaSecret."
+            },
+            statusCode: StatusCodes.Status401Unauthorized);
     }
 
     // 2. Parse Event Payload

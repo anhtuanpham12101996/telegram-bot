@@ -3,12 +3,13 @@ namespace TelegramRelay.Services;
 using Microsoft.AspNetCore.Http;
 
 /// <summary>
-/// Validates incoming GitLab webhook requests using the shared secret token.
+/// Validates incoming GitLab webhook requests.
 /// </summary>
 public interface IGitLabWebhookValidator
 {
     /// <summary>
-    /// Verifies the <c>X-Gitlab-Token</c> header (or <c>secret</c>/<c>key</c> query) against the configured secret.
+    /// Accepts Standard Webhooks HMAC (<c>webhook-signature</c>),
+    /// the legacy <c>X-Gitlab-Token</c> header, or a <c>secret</c>/<c>key</c> query parameter.
     /// </summary>
-    bool Validate(HttpRequest request);
+    bool Validate(HttpRequest request, ReadOnlySpan<byte> rawBody);
 }

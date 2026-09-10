@@ -27,10 +27,10 @@ public sealed class TaigaWebhookValidator(
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        string secret = _options.TaigaSecret;
-        if (string.IsNullOrWhiteSpace(secret))
+        string secret = RelaySecrets.Normalize(_options.TaigaSecret);
+        if (!RelaySecrets.IsConfigured(secret))
         {
-            _logger.LogError("Webhook validation failed: 'TaigaSecret' is not configured in application settings.");
+            _logger.LogError("Webhook validation failed: 'TelegramRelay__TaigaSecret' is not configured (or still a YOUR_ placeholder).");
             return false;
         }
 

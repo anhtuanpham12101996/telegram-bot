@@ -420,3 +420,4 @@
 /Users/tuanpham/Desktop/freelance/telegram-bot/TelegramRelay.Tests/obj/Debug/net10.0/TelegramRelay.Tests.pdb
 /Users/tuanpham/Desktop/freelance/telegram-bot/TelegramRelay.Tests/obj/Debug/net10.0/TelegramRelay.Tests.genruntimeconfig.cache
 /Users/tuanpham/Desktop/freelance/telegram-bot/TelegramRelay.Tests/obj/Debug/net10.0/ref/TelegramRelay.Tests.dll
+/Users/tuanpham/Desktop/freelance/telegram-bot/TelegramRelay.Tests/obj/Debug/net10.0/TelegramRelay.Tests.sourcelink.json

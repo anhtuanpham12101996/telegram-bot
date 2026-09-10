@@ -19,7 +19,7 @@ public sealed class RelayOptions
     public string TaigaSecret { get; set; } = string.Empty;
 
     /// <summary>
-    /// Shared secret configured on the GitLab webhook (<c>X-Gitlab-Token</c>).
+    /// GitLab webhook credential: signing token (<c>whsec_...</c>) and/or legacy secret token.
     /// </summary>
     public string GitLabSecret { get; set; } = string.Empty;
 
