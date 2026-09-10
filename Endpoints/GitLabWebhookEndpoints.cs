@@ -76,7 +76,7 @@ public static class GitLabWebhookEndpoints
             return Results.Ok(new
             {
                 status = "ignored",
-                reason = "Event is not a merge request open, comment, approval, or merge."
+                reason = "Event is not a merge request open/comment/approval/merge, or a job/pipeline/deployment success/failure."
             });
         }
 

@@ -85,4 +85,51 @@ public class GitLabEventClassifierTests
 
         Assert.Equal(GitLabNotifyKind.Ignored, GitLabEventClassifier.Classify(payload));
     }
+
+    [Theory]
+    [InlineData("pipeline", "success", GitLabNotifyKind.PipelineSucceeded)]
+    [InlineData("pipeline", "failed", GitLabNotifyKind.PipelineFailed)]
+    [InlineData("pipeline", "running", GitLabNotifyKind.Ignored)]
+    public void Classify_PipelineStatus(string objectKind, string status, GitLabNotifyKind expected)
+    {
+        var payload = new GitLabWebhookPayload
+        {
+            ObjectKind = objectKind,
+            ObjectAttributes = new GitLabObjectAttributes { Status = status, Id = 31 }
+        };
+
+        Assert.Equal(expected, GitLabEventClassifier.Classify(payload));
+    }
+
+    [Theory]
+    [InlineData("success", GitLabNotifyKind.JobSucceeded)]
+    [InlineData("failed", GitLabNotifyKind.JobFailed)]
+    [InlineData("created", GitLabNotifyKind.Ignored)]
+    public void Classify_JobStatus(string status, GitLabNotifyKind expected)
+    {
+        var payload = new GitLabWebhookPayload
+        {
+            ObjectKind = "build",
+            BuildStatus = status,
+            BuildName = "test"
+        };
+
+        Assert.Equal(expected, GitLabEventClassifier.Classify(payload));
+    }
+
+    [Theory]
+    [InlineData("success", GitLabNotifyKind.DeploymentSucceeded)]
+    [InlineData("failed", GitLabNotifyKind.DeploymentFailed)]
+    [InlineData("running", GitLabNotifyKind.Ignored)]
+    public void Classify_DeploymentStatus(string status, GitLabNotifyKind expected)
+    {
+        var payload = new GitLabWebhookPayload
+        {
+            ObjectKind = "deployment",
+            Status = status,
+            Environment = "production"
+        };
+
+        Assert.Equal(expected, GitLabEventClassifier.Classify(payload));
+    }
 }

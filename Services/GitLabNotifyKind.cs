@@ -10,5 +10,11 @@ public enum GitLabNotifyKind
     MergeRequestReopened,
     MergeRequestCommented,
     MergeRequestApproved,
-    MergeRequestMerged
+    MergeRequestMerged,
+    PipelineSucceeded,
+    PipelineFailed,
+    JobSucceeded,
+    JobFailed,
+    DeploymentSucceeded,
+    DeploymentFailed
 }

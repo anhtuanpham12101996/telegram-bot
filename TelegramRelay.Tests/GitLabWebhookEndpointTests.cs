@@ -179,6 +179,35 @@ public class GitLabWebhookEndpointTests : IClassFixture<WebApplicationFactory<Pr
     }
 
     [Fact]
+    public async Task PostWebhook_WhenPipelineSucceeded_Returns200Ok()
+    {
+        _mockNotificationService.Invocations.Clear();
+        var client = _factory.CreateClient();
+        string json = """
+        {
+          "object_kind": "pipeline",
+          "user": { "name": "Alex Rivera" },
+          "project": { "id": 10, "path_with_namespace": "acme/api" },
+          "object_attributes": {
+            "id": 31,
+            "status": "success",
+            "ref": "main",
+            "url": "https://gitlab.example.com/acme/api/-/pipelines/31"
+          }
+        }
+        """;
+
+        var response = await SendWebhookAsync(client, json);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        _mockNotificationService.Verify(s => s.SendNotificationAsync(
+            It.IsAny<long>(),
+            It.IsAny<GitLabWebhookPayload>(),
+            GitLabNotifyKind.PipelineSucceeded,
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
     public async Task PostWebhook_WithInvalidJson_Returns400BadRequest()
     {
         var client = _factory.CreateClient();

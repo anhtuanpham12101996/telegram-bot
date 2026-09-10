@@ -31,6 +31,10 @@ public class GitLabNotificationServiceTests
         string message = _service.FormatMessage(payload, GitLabNotifyKind.MergeRequestOpened);
 
         Assert.Contains("Merge Request !12 opened", message);
+        Assert.Contains("<b>acme/api</b>", message);
+        int projectIndex = message.IndexOf("<b>acme/api</b>", StringComparison.Ordinal);
+        int headlineIndex = message.IndexOf("Merge Request !12 opened", StringComparison.Ordinal);
+        Assert.True(projectIndex >= 0 && headlineIndex > projectIndex);
         Assert.Contains("Fix user authentication", message);
         Assert.Contains("feature/login", message);
         Assert.Contains("main", message);
@@ -75,6 +79,60 @@ public class GitLabNotificationServiceTests
 
         Assert.Contains("Merge Request !12 approved", approved);
         Assert.Contains("Merge Request !12 merged", merged);
+    }
+
+    [Fact]
+    public void FormatMessage_PipelineFailed_IncludesRefAndLink()
+    {
+        var payload = new GitLabWebhookPayload
+        {
+            ObjectKind = "pipeline",
+            User = new GitLabUser { Name = "Alex Rivera" },
+            Project = new GitLabProject
+            {
+                PathWithNamespace = "HieuTN5/evn-genco3",
+                WebUrl = "https://gitlab.com/HieuTN5/evn-genco3"
+            },
+            ObjectAttributes = new GitLabObjectAttributes
+            {
+                Id = 99,
+                Status = "failed",
+                Ref = "main",
+                Sha = "bcbb5ec396a2c0f828686f14fac9b80b780504f2",
+                Url = "https://gitlab.com/HieuTN5/evn-genco3/-/pipelines/99"
+            }
+        };
+
+        string message = _service.FormatMessage(payload, GitLabNotifyKind.PipelineFailed);
+
+        Assert.StartsWith("<b>HieuTN5/evn-genco3</b>", message.Replace("\r\n", "\n"));
+        Assert.Contains("❌ Pipeline failed", message);
+        Assert.Contains("main", message);
+        Assert.Contains("https://gitlab.com/HieuTN5/evn-genco3/-/pipelines/99", message);
+        Assert.Contains("bcbb5ec3", message);
+    }
+
+    [Fact]
+    public void FormatMessage_JobSucceeded_IncludesJobName()
+    {
+        var payload = new GitLabWebhookPayload
+        {
+            ObjectKind = "build",
+            User = new GitLabUser { Name = "Alex Rivera" },
+            Project = new GitLabProject { PathWithNamespace = "HieuTN5/evn-genco3" },
+            BuildName = "deploy-prod",
+            BuildStage = "deploy",
+            BuildStatus = "success",
+            Ref = "main",
+            Sha = "2293ada6b400935a1378653304eaf6221e0fdb8f"
+        };
+
+        string message = _service.FormatMessage(payload, GitLabNotifyKind.JobSucceeded);
+
+        Assert.Contains("✅ Job succeeded", message);
+        Assert.Contains("deploy-prod", message);
+        Assert.Contains("deploy", message);
+        Assert.Contains("2293ada6", message);
     }
 
     [Fact]
