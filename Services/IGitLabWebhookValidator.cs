@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Http;
 public interface IGitLabWebhookValidator
 {
     /// <summary>
-    /// Accepts Standard Webhooks HMAC (<c>webhook-signature</c>),
-    /// the legacy <c>X-Gitlab-Token</c> header, or a <c>secret</c>/<c>key</c> query parameter.
+    /// Verifies the shared Secret token in <c>X-Gitlab-Token</c> (or <c>secret</c>/<c>key</c> query).
     /// </summary>
     bool Validate(HttpRequest request, ReadOnlySpan<byte> rawBody);
 }

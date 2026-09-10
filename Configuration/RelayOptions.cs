@@ -19,7 +19,7 @@ public sealed class RelayOptions
     public string TaigaSecret { get; set; } = string.Empty;
 
     /// <summary>
-    /// GitLab webhook credential: signing token (<c>whsec_...</c>) and/or legacy secret token.
+    /// Shared GitLab webhook Secret token, sent as <c>X-Gitlab-Token</c>. Reuse this value on every project webhook.
     /// </summary>
     public string GitLabSecret { get; set; } = string.Empty;
 
@@ -36,7 +36,7 @@ public sealed class RelayOptions
 
     /// <summary>
     /// Map of GitLab Project ID (as string key) to target Telegram Chat ID.
-    /// Example: { "10": -100123456789 }
+    /// Example: { "101": -100123456789 }
     /// </summary>
     public Dictionary<string, long> GitLabProjectChatMappings { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 }

@@ -41,7 +41,7 @@ public static class GitLabWebhookEndpoints
                 new
                 {
                     error = "unauthorized",
-                    hint = "GitLab.com signs webhooks with webhook-signature (whsec_ signing token). Put that token in TelegramRelay__GitLabSecret, or use a legacy Secret token matching X-Gitlab-Token."
+                    hint = "Set GitLab webhook Secret token to TelegramRelay:GitLabSecret. The same token can be reused on every repository."
                 },
                 statusCode: StatusCodes.Status401Unauthorized);
         }
