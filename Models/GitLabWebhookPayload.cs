@@ -189,6 +189,9 @@ public sealed class GitLabMergeRequest
     [JsonPropertyName("title")]
     public string? Title { get; set; }
 
+    [JsonPropertyName("description")]
+    public string? Description { get; set; }
+
     [JsonPropertyName("url")]
     public string? Url { get; set; }
 

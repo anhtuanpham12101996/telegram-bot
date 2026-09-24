@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TelegramRelay")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4af3332fb23b4be6d83dc8b7e9202974bb48e013")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9a2e17ddcd5dbcbfa8dc3cb106e45626fb99dc7a")]
 [assembly: System.Reflection.AssemblyProductAttribute("TelegramRelay")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TelegramRelay")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

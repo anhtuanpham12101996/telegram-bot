@@ -40,7 +40,41 @@ public class GitLabNotificationServiceTests
         Assert.Contains("main", message);
         Assert.Contains("Alex Rivera", message);
         Assert.Contains("https://gitlab.example.com/acme/api/-/merge_requests/12", message);
+        Assert.DoesNotContain("Description:", message);
         Assert.DoesNotContain("<script>", message);
+    }
+
+    [Fact]
+    public void FormatMessage_OpenedMergeRequest_IncludesDescriptionAfterTitle()
+    {
+        var payload = CreateMergeRequestPayload("open");
+        payload.ObjectAttributes!.Description =
+            "+ add new gitignore\n+ add new project AssetManagement\n+ add CRUD <api>";
+
+        string message = _service.FormatMessage(payload, GitLabNotifyKind.MergeRequestOpened);
+        string normalized = message.Replace("\r\n", "\n");
+
+        int titleIndex = normalized.IndexOf("📌 <b>Title:</b> Fix user authentication", StringComparison.Ordinal);
+        int descriptionIndex = normalized.IndexOf("📝 <b>Description:</b>", StringComparison.Ordinal);
+        int branchIndex = normalized.IndexOf("feature/login", StringComparison.Ordinal);
+
+        Assert.True(titleIndex >= 0 && descriptionIndex > titleIndex && branchIndex > descriptionIndex);
+        Assert.Contains("+ add new gitignore", message);
+        Assert.Contains("+ add new project AssetManagement", message);
+        Assert.Contains("+ add CRUD &lt;api&gt;", message);
+        Assert.DoesNotContain("<api>", message);
+    }
+
+    [Fact]
+    public void FormatMessage_ApprovedMergeRequest_OmitsDescription()
+    {
+        var payload = CreateMergeRequestPayload("approved");
+        payload.ObjectAttributes!.Description = "+ should not appear on approve";
+
+        string message = _service.FormatMessage(payload, GitLabNotifyKind.MergeRequestApproved);
+
+        Assert.DoesNotContain("Description:", message);
+        Assert.DoesNotContain("should not appear on approve", message);
     }
 
     [Fact]

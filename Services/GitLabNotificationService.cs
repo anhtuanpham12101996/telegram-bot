@@ -15,6 +15,7 @@ public sealed class GitLabNotificationService(
     ILogger<GitLabNotificationService> logger) : IGitLabNotificationService
 {
     private const int MaxCommentLength = 280;
+    private const int MaxDescriptionLength = 800;
 
     private readonly ITelegramBotClient _botClient = botClient ?? throw new ArgumentNullException(nameof(botClient));
     private readonly ILogger<GitLabNotificationService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -88,6 +89,11 @@ public sealed class GitLabNotificationService(
     {
         string mrTitle = WebUtility.HtmlEncode(ResolveMrTitle(payload));
         sb.AppendLine($"📌 <b>Title:</b> {mrTitle}");
+
+        if (kind is GitLabNotifyKind.MergeRequestOpened or GitLabNotifyKind.MergeRequestReopened)
+        {
+            AppendDescription(sb, payload);
+        }
 
         string? sourceBranch = payload.ObjectAttributes?.SourceBranch ?? payload.MergeRequest?.SourceBranch;
         string? targetBranch = payload.ObjectAttributes?.TargetBranch ?? payload.MergeRequest?.TargetBranch;
@@ -223,6 +229,18 @@ public sealed class GitLabNotificationService(
         GitLabNotifyKind.MergeRequestApproved or
         GitLabNotifyKind.MergeRequestMerged;
 
+    private static void AppendDescription(StringBuilder sb, GitLabWebhookPayload payload)
+    {
+        string? description = payload.ObjectAttributes?.Description ?? payload.MergeRequest?.Description;
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            return;
+        }
+
+        string truncated = Truncate(description, MaxDescriptionLength);
+        sb.AppendLine($"📝 <b>Description:</b>\n{WebUtility.HtmlEncode(truncated)}");
+    }
+
     private static string ResolveMrTitle(GitLabWebhookPayload payload) =>
         payload.ObjectAttributes?.Title
         ?? payload.MergeRequest?.Title
@@ -307,14 +325,14 @@ public sealed class GitLabNotificationService(
         return null;
     }
 
-    private static string Truncate(string value)
+    private static string Truncate(string value, int maxLength = MaxCommentLength)
     {
         string trimmed = value.Replace("\r\n", "\n").Trim();
-        if (trimmed.Length <= MaxCommentLength)
+        if (trimmed.Length <= maxLength)
         {
             return trimmed;
         }
 
-        return trimmed[..MaxCommentLength].TrimEnd() + "…";
+        return trimmed[..maxLength].TrimEnd() + "…";
     }
 }
